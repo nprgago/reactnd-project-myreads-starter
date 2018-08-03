@@ -34,6 +34,21 @@ class BooksApp extends React.Component {
       isLoading: false
     })).catch(err => console.log(err))
   }  
+  
+  currentReading = (e) => {
+    this.setState(state => ({
+      books: state.books.map(book => {
+        if (book.id === e.target.value ) {
+          let newObj = book
+          newObj.shelf = 'currentlyReading'
+          return newObj
+        }
+        return book        
+      })
+    }))
+    
+    API.update(e.target.value, 'currentlyReading')
+  } 
 
   wantToRead = (e) => {
     this.setState(state => ({
@@ -170,8 +185,8 @@ class BooksApp extends React.Component {
                                 <div className="book-shelf-changer">
                                   <select>
                                     <option value={book.id} disabled>Move to...</option>
-                                    <option value={book.id}>Currently Reading</option>
-                                    <option value={book.id}>Want to Read</option>
+                                    <option value={book.id} onClick={this.currentReading}>Currently Reading</option>
+                                    <option value={book.id} onClick={this.wantToRead}>Want to Read</option>
                                     <option value={book.id} disabled={true}>Read</option>
                                     <option value={book.id}>None</option>
                                   </select>
