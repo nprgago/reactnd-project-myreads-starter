@@ -7,7 +7,6 @@ class BooksApp extends React.Component {
   
   state = {
     isLoading: true,
-    isLoaded : false,
     books: [],
     /**
      * TODO: Instead of using this state variable to keep track of which page
@@ -23,18 +22,37 @@ class BooksApp extends React.Component {
   componentDidMount() {
     // When Loading 
     if(this.state.isLoading) { 
-      // Get All Songs 
-      API.getAll().then( (books) => this.setState({
-        books,
-        isLoaded: true,
-        isLoading: false
-      }))
+      // Get All Books 
+      this.getBooks()
     }
-  } 
+  }
+  
+  getBooks = () => {
+    console.log('getting songs') // TODO: Remove
+    API.getAll().then( (books) => this.setState({
+      books,
+      isLoading: false
+    })).catch(err => console.log(err))
+  }  
+
+  wantToRead = (e) => {
+    this.setState(state => ({
+      books: state.books.map(book => {
+        if (book.id === e.target.value ) {
+          let newObj = book
+          newObj.shelf = 'wantToRead'
+          return newObj
+        }
+        return book        
+      })
+    }))
+    
+    API.update(e.target.value, 'wantToRead')
+  }
 
   render() {
-    console.log(this.state.books) //remove
-    console.log(this.state.isLoading) //remove
+    console.log(this.state.books) // TODO: Remove
+    console.log(this.state.isLoading) // TODO: Remove
     return (
       <div className="app">
         {this.state.showSearchPage ? (
@@ -81,7 +99,7 @@ class BooksApp extends React.Component {
                                   <select>
                                     <option value={book.id} disabled>Move to...</option>
                                     <option value={book.id} disabled={true}>Currently Reading</option>
-                                    <option value={book.id}>Want to Read</option>
+                                    <option value={book.id} onClick={this.wantToRead}>Want to Read</option>
                                     <option value={book.id}>Read</option>
                                     <option value={book.id}>None</option>
                                   </select>
@@ -116,7 +134,7 @@ class BooksApp extends React.Component {
                                 <div className="book-shelf-changer">
                                   <select>
                                     <option value={book.id} disabled>Move to...</option>
-                                    <option value={book.id}>Currently Reading</option>
+                                    <option value={book.id} onClick={this.currentReading}>Currently Reading</option>
                                     <option value={book.id} disabled={true}>Want to Read</option>
                                     <option value={book.id}>Read</option>
                                     <option value={book.id}>None</option>
