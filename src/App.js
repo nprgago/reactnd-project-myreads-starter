@@ -36,9 +36,10 @@ class BooksApp extends React.Component {
   }  
   
   currentReading = (e) => {
+    const id = e.target.value
     this.setState(state => ({
       books: state.books.map(book => {
-        if (book.id === e.target.value ) {
+        if (book.id === id) {
           let newObj = book
           newObj.shelf = 'currentlyReading'
           return newObj
@@ -47,13 +48,14 @@ class BooksApp extends React.Component {
       })
     }))
     
-    API.update(e.target.value, 'currentlyReading')
+    API.update(id, 'currentlyReading')
   } 
 
   wantToRead = (e) => {
+    const id = e.target.value
     this.setState(state => ({
       books: state.books.map(book => {
-        if (book.id === e.target.value ) {
+        if (book.id === id) {
           let newObj = book
           newObj.shelf = 'wantToRead'
           return newObj
@@ -62,13 +64,14 @@ class BooksApp extends React.Component {
       })
     }))
     
-    API.update(e.target.value, 'wantToRead')
+    API.update(id, 'wantToRead')
   }
 
   read = (e) => {
+    const id = e.target.value
     this.setState(state => ({
       books: state.books.map(book => {
-        if (book.id === e.target.value ) {
+        if (book.id === id) {
           let newObj = book
           newObj.shelf = 'read'
           return newObj
@@ -77,7 +80,7 @@ class BooksApp extends React.Component {
       })
     }))
     
-    API.update(e.target.value, 'read')
+    API.update(id, 'read')
   }
 
   render() {
