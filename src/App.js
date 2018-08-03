@@ -1,6 +1,6 @@
 import React from 'react'
 import * as API from './BooksAPI'
-// import * as BooksAPI from './BooksAPI'
+import Loader from './components/loader'
 import './App.css'
 
 class BooksApp extends React.Component {
@@ -122,7 +122,7 @@ class BooksApp extends React.Component {
                   <div className="bookshelf-books">
                     <ol className="books-grid">
                       {this.state.isLoading
-                        ? <div> Loading </div>
+                        ? <Loader />
                         : this.state.books.filter(book => book.shelf === 'currentlyReading').map(book => (
                           <li key={book.id}>
                             <div className="book">
@@ -158,7 +158,7 @@ class BooksApp extends React.Component {
                   <div className="bookshelf-books">
                     <ol className="books-grid">
                       {this.state.isLoading
-                        ? <div> Loading </div>
+                        ? <Loader />
                         : this.state.books.filter(book => book.shelf === 'wantToRead').map(book => (
                           <li key={book.id}>
                             <div className="book">
@@ -194,7 +194,7 @@ class BooksApp extends React.Component {
                   <div className="bookshelf-books">
                     <ol className="books-grid">
                       {this.state.isLoading
-                        ? <div> Loading </div>
+                        ? <Loader />
                         : this.state.books.filter(book => book.shelf === 'read').map(book => (
                           <li key={book.id}>
                             <div className="book">
