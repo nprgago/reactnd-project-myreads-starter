@@ -65,6 +65,21 @@ class BooksApp extends React.Component {
     API.update(e.target.value, 'wantToRead')
   }
 
+  read = (e) => {
+    this.setState(state => ({
+      books: state.books.map(book => {
+        if (book.id === e.target.value ) {
+          let newObj = book
+          newObj.shelf = 'read'
+          return newObj
+        }
+        return book        
+      })
+    }))
+    
+    API.update(e.target.value, 'read')
+  }
+
   render() {
     console.log(this.state.books) // TODO: Remove
     console.log(this.state.isLoading) // TODO: Remove
@@ -115,7 +130,7 @@ class BooksApp extends React.Component {
                                     <option value={book.id} disabled>Move to...</option>
                                     <option value={book.id} disabled={true}>Currently Reading</option>
                                     <option value={book.id} onClick={this.wantToRead}>Want to Read</option>
-                                    <option value={book.id}>Read</option>
+                                    <option value={book.id} onClick={this.read}>Read</option>
                                     <option value={book.id}>None</option>
                                   </select>
                                 </div>
@@ -151,7 +166,7 @@ class BooksApp extends React.Component {
                                     <option value={book.id} disabled>Move to...</option>
                                     <option value={book.id} onClick={this.currentReading}>Currently Reading</option>
                                     <option value={book.id} disabled={true}>Want to Read</option>
-                                    <option value={book.id}>Read</option>
+                                    <option value={book.id} onClick={this.read}>Read</option>
                                     <option value={book.id}>None</option>
                                   </select>
                                 </div>
