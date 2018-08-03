@@ -32,7 +32,6 @@ class BooksApp extends React.Component {
     }
   } 
 
-
   render() {
     console.log(this.state.books) //remove
     console.log(this.state.isLoading) //remove
@@ -81,7 +80,7 @@ class BooksApp extends React.Component {
                                 <div className="book-shelf-changer">
                                   <select>
                                     <option value={book.id} disabled>Move to...</option>
-                                    <option value={book.id}>Currently Reading</option>
+                                    <option value={book.id} disabled={true}>Currently Reading</option>
                                     <option value={book.id}>Want to Read</option>
                                     <option value={book.id}>Read</option>
                                     <option value={book.id}>None</option>
@@ -118,7 +117,7 @@ class BooksApp extends React.Component {
                                   <select>
                                     <option value={book.id} disabled>Move to...</option>
                                     <option value={book.id}>Currently Reading</option>
-                                    <option value={book.id}>Want to Read</option>
+                                    <option value={book.id} disabled={true}>Want to Read</option>
                                     <option value={book.id}>Read</option>
                                     <option value={book.id}>None</option>
                                   </select>
@@ -155,7 +154,7 @@ class BooksApp extends React.Component {
                                     <option value={book.id} disabled>Move to...</option>
                                     <option value={book.id}>Currently Reading</option>
                                     <option value={book.id}>Want to Read</option>
-                                    <option value={book.id}>Read</option>
+                                    <option value={book.id} disabled={true}>Read</option>
                                     <option value={book.id}>None</option>
                                   </select>
                                 </div>
