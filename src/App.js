@@ -85,6 +85,7 @@ class BooksApp extends React.Component {
     API.update(id, 'read')
   }
 
+<<<<<<< HEAD
   none = (e) => {
     const id = e.target.value
     this.setState(state => ({
@@ -103,6 +104,10 @@ class BooksApp extends React.Component {
 
   updateQuery = (query) => {
     this.setState({ query: query })
+=======
+  updateQuery = (query) => {
+    this.setState({ query: query.trim() })
+>>>>>>> 6f55cae82cacaff34b74e0bfb2310c69b28f18de
   }
 
   render() {
@@ -144,6 +149,7 @@ class BooksApp extends React.Component {
                             <div className="book-shelf-changer">
                               <select>
                                 <option value={book.id} disabled>Move to...</option>
+<<<<<<< HEAD
                                 <option 
                                   value={book.id} 
                                   disabled={book.shelf === 'currentlyReading' ? true : false} 
@@ -159,6 +165,11 @@ class BooksApp extends React.Component {
                                   disabled={book.shelf === 'read' ? true : false}
                                   onClick={this.read}
                                 >Read</option>
+=======
+                                <option value={book.id} onClick={this.wantToRead}>Currently Reading</option>
+                                <option value={book.id} onClick={this.wantToRead}>Want to Read</option>
+                                <option value={book.id} onClick={this.read}>Read</option>
+>>>>>>> 6f55cae82cacaff34b74e0bfb2310c69b28f18de
                                 <option value={book.id} disabled>None</option>
                               </select>
                             </div>
