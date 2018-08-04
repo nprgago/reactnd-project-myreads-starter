@@ -85,6 +85,22 @@ class BooksApp extends React.Component {
     API.update(id, 'read')
   }
 
+  none = (e) => {
+    const id = e.target.value
+    this.setState(state => ({
+      books: state.books.map(book => {
+        if (book.id === id) {
+          let newObj = book
+          newObj.shelf = 'none'
+          return newObj
+        }
+        return book        
+      })
+    }))
+    
+    API.update(id, 'none')
+  }
+
   updateQuery = (query) => {
     this.setState({ query: query })
   }
@@ -128,9 +144,21 @@ class BooksApp extends React.Component {
                             <div className="book-shelf-changer">
                               <select>
                                 <option value={book.id} disabled>Move to...</option>
-                                <option value={book.id} onClick={this.wantToRead}>Currently Reading</option>
-                                <option value={book.id} onClick={this.wantToRead}>Want to Read</option>
-                                <option value={book.id} onClick={this.read}>Read</option>
+                                <option 
+                                  value={book.id} 
+                                  disabled={book.shelf === 'currentlyReading' ? true : false} 
+                                  onClick={this.currentReading}
+                                >Currently Reading</option>
+                                <option 
+                                  value={book.id}
+                                  disabled={book.shelf === 'wantToRead' ? true : false} 
+                                  onClick={this.wantToRead}
+                                >Want to Read</option>
+                                <option 
+                                  value={book.id} 
+                                  disabled={book.shelf === 'read' ? true : false}
+                                  onClick={this.read}
+                                >Read</option>
                                 <option value={book.id} disabled>None</option>
                               </select>
                             </div>
@@ -174,7 +202,7 @@ class BooksApp extends React.Component {
                                     <option value={book.id} disabled={true}>Currently Reading</option>
                                     <option value={book.id} onClick={this.wantToRead}>Want to Read</option>
                                     <option value={book.id} onClick={this.read}>Read</option>
-                                    <option value={book.id}>None</option>
+                                    <option value={book.id} onClick={this.none}>None</option>
                                   </select>
                                 </div>
                               </div>
@@ -210,7 +238,7 @@ class BooksApp extends React.Component {
                                     <option value={book.id} onClick={this.currentReading}>Currently Reading</option>
                                     <option value={book.id} disabled={true}>Want to Read</option>
                                     <option value={book.id} onClick={this.read}>Read</option>
-                                    <option value={book.id}>None</option>
+                                    <option value={book.id} onClick={this.none}>None</option>
                                   </select>
                                 </div>
                               </div>
@@ -246,7 +274,7 @@ class BooksApp extends React.Component {
                                     <option value={book.id} onClick={this.currentReading}>Currently Reading</option>
                                     <option value={book.id} onClick={this.wantToRead}>Want to Read</option>
                                     <option value={book.id} disabled={true}>Read</option>
-                                    <option value={book.id}>None</option>
+                                    <option value={book.id} onClick={this.none}>None</option>
                                   </select>
                                 </div>
                               </div>
