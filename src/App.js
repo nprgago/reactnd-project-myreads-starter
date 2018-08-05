@@ -11,16 +11,8 @@ class BooksApp extends React.Component {
     isLoading: true,
     books: [],
     query: '',
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
     showSearchPage: false
   }
-
-  // 
 
   componentDidMount() {
     // When Loading 
@@ -37,68 +29,20 @@ class BooksApp extends React.Component {
     })).catch(err => console.log(err))
   }  
   
-  currentReading = (e) => {
+  moveToShelf = (e) => {
     const id = e.target.value
+    const shelf = e.target.className
     this.setState(state => ({
       books: state.books.map(book => {
         if (book.id === id) {
           let newObj = book
-          newObj.shelf = 'currentlyReading'
+          newObj.shelf = shelf
           return newObj
         }
-        return book        
+        return book
       })
     }))
-    
-    API.update(id, 'currentlyReading')
-  } 
-
-  wantToRead = (e) => {
-    const id = e.target.value
-    this.setState(state => ({
-      books: state.books.map(book => {
-        if (book.id === id) {
-          let newObj = book
-          newObj.shelf = 'wantToRead'
-          return newObj
-        }
-        return book        
-      })
-    }))
-    
-    API.update(id, 'wantToRead')
-  }
-
-  read = (e) => {
-    const id = e.target.value
-    this.setState(state => ({
-      books: state.books.map(book => {
-        if (book.id === id) {
-          let newObj = book
-          newObj.shelf = 'read'
-          return newObj
-        }
-        return book        
-      })
-    }))
-    
-    API.update(id, 'read')
-  }
-
-  none = (e) => {
-    const id = e.target.value
-    this.setState(state => ({
-      books: state.books.map(book => {
-        if (book.id === id) {
-          let newObj = book
-          newObj.shelf = 'none'
-          return newObj
-        }
-        return book        
-      })
-    }))
-    
-    API.update(id, 'none')
+    API.update(id, shelf)
   }
 
   updateQuery = (query) => {
@@ -145,19 +89,22 @@ class BooksApp extends React.Component {
                               <select>
                                 <option value={book.id} disabled>Move to...</option>
                                 <option 
+                                  className = 'currentlyReading'
                                   value={book.id} 
                                   disabled={book.shelf === 'currentlyReading' ? true : false} 
-                                  onClick={this.currentReading}
+                                  onClick={this.moveToShelf}
                                 >Currently Reading</option>
-                                <option 
+                                <option
+                                  className = 'wantToRead' 
                                   value={book.id}
                                   disabled={book.shelf === 'wantToRead' ? true : false} 
-                                  onClick={this.wantToRead}
+                                  onClick={this.moveToShelf}
                                 >Want to Read</option>
                                 <option 
+                                  className = 'read'
                                   value={book.id} 
                                   disabled={book.shelf === 'read' ? true : false}
-                                  onClick={this.read}
+                                  onClick={this.moveToShelf}
                                 >Read</option>
                                 <option value={book.id} disabled>None</option>
                               </select>
@@ -200,9 +147,9 @@ class BooksApp extends React.Component {
                                   <select>
                                     <option value={book.id} disabled>Move to...</option>
                                     <option value={book.id} disabled={true}>Currently Reading</option>
-                                    <option value={book.id} onClick={this.wantToRead}>Want to Read</option>
-                                    <option value={book.id} onClick={this.read}>Read</option>
-                                    <option value={book.id} onClick={this.none}>None</option>
+                                    <option className='wantToRead' value={book.id} onClick={this.moveToShelf}>Want to Read</option>
+                                    <option className='read' value={book.id} onClick={this.moveToShelf}>Read</option>
+                                    <option className='none' value={book.id} onClick={this.moveToShelf}>None</option>
                                   </select>
                                 </div>
                               </div>
@@ -235,10 +182,10 @@ class BooksApp extends React.Component {
                                 <div className="book-shelf-changer">
                                   <select>
                                     <option value={book.id} disabled>Move to...</option>
-                                    <option value={book.id} onClick={this.currentReading}>Currently Reading</option>
+                                    <option className='currentlyReading' value={book.id} onClick={this.moveToShelf}>Currently Reading</option>
                                     <option value={book.id} disabled={true}>Want to Read</option>
-                                    <option value={book.id} onClick={this.read}>Read</option>
-                                    <option value={book.id} onClick={this.none}>None</option>
+                                    <option className='read' value={book.id} onClick={this.moveToShelf}>Read</option>
+                                    <option className='none' value={book.id} onClick={this.moveToShelf}>None</option>
                                   </select>
                                 </div>
                               </div>
@@ -271,10 +218,10 @@ class BooksApp extends React.Component {
                                 <div className="book-shelf-changer">
                                   <select>
                                     <option value={book.id} disabled>Move to...</option>
-                                    <option value={book.id} onClick={this.currentReading}>Currently Reading</option>
-                                    <option value={book.id} onClick={this.wantToRead}>Want to Read</option>
+                                    <option className='currentlyReading' value={book.id} onClick={this.moveToShelf}>Currently Reading</option>
+                                    <option className='wantToRead' value={book.id} onClick={this.moveToShelf}>Want to Read</option>
                                     <option value={book.id} disabled={true}>Read</option>
-                                    <option value={book.id} onClick={this.none}>None</option>
+                                    <option className='none' value={book.id} onClick={this.moveToShelf}>None</option>
                                   </select>
                                 </div>
                               </div>
