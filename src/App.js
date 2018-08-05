@@ -1,17 +1,17 @@
 import React from 'react'
+import { Route } from 'react-router-dom'
 import * as API from './BooksAPI'
 import Loader from './components/loader'
-import escapeRegExp from 'escape-string-regexp'
-import sortBy from 'sort-by'
+import Search from './components/search';
+import { Link } from 'react-router-dom' 
+import cover from './icons/cover.png'
 import './App.css'
 
 class BooksApp extends React.Component {
   
   state = {
     isLoading: true,
-    books: [],
-    query: '',
-    showSearchPage: false
+    books: []
   }
 
   componentDidMount() {
@@ -27,8 +27,8 @@ class BooksApp extends React.Component {
       books,
       isLoading: false
     })).catch(err => console.log(err))
-  }  
-  
+  } 
+    
   moveToShelf = (e) => {
     const id = e.target.value
     const shelf = e.target.className
@@ -45,86 +45,72 @@ class BooksApp extends React.Component {
     API.update(id, shelf)
   }
 
-  updateQuery = (query) => {
-    this.setState({ query: query })
+  findId = (id) => {
+    let found = false
+    this.state.books.map(book => { 
+      if (book.id === id) {
+        found = true
+        return found
+      }
+    })
+    return found
+  } 
+  
+  findShelf = (id, shelf) => {
+    let found = false
+    this.state.books.map(book => {
+      if (book.id === id && book.shelf !== shelf) {
+        found = true
+        return found
+      }
+    })
+    return found
   }
 
-  render() {
+  addToShelf = (e) => {
+    const id = e.target.value
+    const shelf = e.target.className
     
-    let showingBooks 
-    if (this.state.query) {
-      const match = new RegExp(escapeRegExp(this.state.query), 'i')
-      showingBooks = this.state.books.filter(book => match.test(book.title))
-    } else {
-      showingBooks = this.state.books
-    }
+    if (!this.findId(id)) {
+      
+      API.get(id).then( book => {
+        book.shelf = shelf
+        const newBooks = this.state.books
+        newBooks.push(book)      
+        this.setState({ books: newBooks })
+      }).catch(err => console.log(err))
 
-    showingBooks.sort(sortBy('title'))
-    
+      API.update(id, shelf).catch(err => console.log(err))
+    } else {
+      
+      if(this.findShelf(id, shelf)) {
+        this.setState(state => ({
+          books: state.books.map(book => {
+            if (book.id === id) {
+              let newObj = book
+              newObj.shelf = shelf
+              return newObj
+            }
+            return book
+          })
+        }))
+        API.update(id, shelf)
+      }
+    }
+  }  
+  
+
+  render() {
     return (
       <div className="app">
-        {this.state.showSearchPage ? (
-          <div className="search-books">
-            <div className="search-books-bar">
-              <a className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</a>
-              <div className="search-books-input-wrapper">
-                <input 
-                  type="text" 
-                  placeholder="Search by title or author"
-                  value={this.state.query}
-                  onChange={(e) => this.updateQuery(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="search-books-results">
-              <ol className="books-grid">
-                  {this.state.isLoading
-                    ? <Loader />
-                    : showingBooks.map(book => (
-                      <li key={book.id}>
-                        <div className="book">
-                          <div className="book-top">
-                            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
-                            <div className="book-shelf-changer">
-                              <select>
-                                <option value={book.id} disabled>Move to...</option>
-                                <option 
-                                  className = 'currentlyReading'
-                                  value={book.id} 
-                                  disabled={book.shelf === 'currentlyReading' ? true : false} 
-                                  onClick={this.moveToShelf}
-                                >Currently Reading</option>
-                                <option
-                                  className = 'wantToRead' 
-                                  value={book.id}
-                                  disabled={book.shelf === 'wantToRead' ? true : false} 
-                                  onClick={this.moveToShelf}
-                                >Want to Read</option>
-                                <option 
-                                  className = 'read'
-                                  value={book.id} 
-                                  disabled={book.shelf === 'read' ? true : false}
-                                  onClick={this.moveToShelf}
-                                >Read</option>
-                                <option value={book.id} disabled>None</option>
-                              </select>
-                            </div>
-                          </div>
-                          <div className="book-title">{book.title}</div>
-                          {book.authors.length < 1 
-                            ? <div className="book-authors">{book.authors[0]}</div>
-                            : book.authors.map( author => (
-                              <div className="book-authors">{author}</div>
-                            ))                             
-                          }
-                        </div>
-                      </li>
-                    ))
-                  }                  
-                </ol> 
-            </div>
-          </div>
-        ) : (
+        <Route path='/search' render= {() => (
+          <Search 
+            isLoading = {this.state.isLoading}
+            addToShelf = {this.addToShelf}
+          />
+        )} />
+
+        <Route exact path='/' render= {() => (
           <div className="list-books">
             <div className="list-books-title">
               <h1>MyReads</h1>
@@ -142,7 +128,7 @@ class BooksApp extends React.Component {
                           <li key={book.id}>
                             <div className="book">
                               <div className="book-top">
-                                <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
+                                <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks && book.imageLinks.thumbnail ? book.imageLinks.thumbnail : cover })`}}></div>
                                 <div className="book-shelf-changer">
                                   <select>
                                     <option value={book.id} disabled>Move to...</option>
@@ -153,13 +139,11 @@ class BooksApp extends React.Component {
                                   </select>
                                 </div>
                               </div>
-                              <div className="book-title">{book.title}</div>
-                              {book.authors.length < 1 
-                                ? <div className="book-authors">{book.authors[0]}</div>
-                                : book.authors.map( author => (
-                                  <div className="book-authors">{author}</div>
-                                ))                             
-                              }
+                              <div className="book-title">{book.title ? book.title : 'No title available'}</div>                
+                              {book.authors && book.authors.map( author => (
+                                <div className="book-authors">{author}</div>
+                              ))                             
+                              }  
                             </div>
                           </li>
                         ))
@@ -178,7 +162,7 @@ class BooksApp extends React.Component {
                           <li key={book.id}>
                             <div className="book">
                               <div className="book-top">
-                                <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
+                                <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks && book.imageLinks.thumbnail ? book.imageLinks.thumbnail : cover })`}}></div>
                                 <div className="book-shelf-changer">
                                   <select>
                                     <option value={book.id} disabled>Move to...</option>
@@ -189,12 +173,10 @@ class BooksApp extends React.Component {
                                   </select>
                                 </div>
                               </div>
-                              <div className="book-title">{book.title}</div>
-                              {book.authors.length < 1 
-                                ? <div className="book-authors">{book.authors[0]}</div>
-                                : book.authors.map( author => (
-                                  <div className="book-authors">{author}</div>
-                                ))                             
+                              <div className="book-title">{book.title ? book.title : 'No title available'}</div>
+                              {book.authors && book.authors.map( author => (
+                                <div className="book-authors">{author}</div>
+                              ))                             
                               }                              
                             </div>
                           </li>
@@ -214,7 +196,7 @@ class BooksApp extends React.Component {
                           <li key={book.id}>
                             <div className="book">
                               <div className="book-top">
-                                <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
+                                <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks && book.imageLinks.thumbnail ? book.imageLinks.thumbnail : cover })` }}></div>
                                 <div className="book-shelf-changer">
                                   <select>
                                     <option value={book.id} disabled>Move to...</option>
@@ -225,12 +207,10 @@ class BooksApp extends React.Component {
                                   </select>
                                 </div>
                               </div>
-                              <div className="book-title">{book.title}</div>
-                              {book.authors.length < 1 
-                                ? <div className="book-authors">{book.authors[0]}</div>
-                                : book.authors.map( author => (
-                                  <div className="book-authors">{author}</div>
-                                ))                             
+                              <div className="book-title">{book.title ? book.title : 'No title available'}</div>
+                              {book.authors && book.authors.map( author => (
+                                <div className="book-authors">{author}</div>
+                              ))                             
                               }                              
                             </div>
                           </li>
@@ -242,10 +222,13 @@ class BooksApp extends React.Component {
               </div>
             </div>
             <div className="open-search">
-              <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
+              <Link 
+                to = "/search"
+              >Add a book</Link>
             </div>
           </div>
-        )}
+        )} />
+
       </div>
     )
   }

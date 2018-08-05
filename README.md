@@ -4,7 +4,6 @@ This a project requeried for Udacity Front-End Nanodegree powered by Google. Thi
 
 ### Requirements:
 
-- [git](https://git-scm.com/downloads) 
 - [Node.js](https://nodejs.org/en/)
 
 ### To get the front-end running locally:
