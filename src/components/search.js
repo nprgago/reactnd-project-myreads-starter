@@ -3,35 +3,38 @@ import * as API from '../BooksAPI'
 import Loader from './loader'
 import { Link } from 'react-router-dom' 
 import { Debounce } from 'react-throttle'
-import cover from '../icons/cover.png'
+import PropTypes from 'prop-types'
+import Book from './Book'
 
 class Search extends React.Component {
 
+  static propTypes = {
+    moveToShelf: PropTypes.func.isRequired,
+    books: PropTypes.array.isRequired
+  } 
+
   state = {
     query: '',
-    isLoading: false,
-    search: []
+    search: [],
+    isLoading: false
   }
   
   updateQuery = (query) => {
-    this.setState({ 
-      query: query,
-      isLoading: true 
-    })
+    this.setState({ query: query, isLoading: true })
     
     if (query) {
-      console.log(query)
       API.search(query.trim()).then( books => {
         books.length > 0 ? this.setState({ search : books, isLoading: false }) : this.setState({ search: [], isLoading: false })
       }).catch(err => console.log(err))
 
-    } else {
-      this.setState({ search: [], isLoading: false })
-    }
-
+    } else { this.setState({ search: [], isLoading: false })}
   }
   
   render() {
+    
+    const { moveToShelf, books } = this.props
+    const { isLoading, search } = this.state 
+
     return (
       <div>
         <div className="search-books">
@@ -41,11 +44,10 @@ class Search extends React.Component {
               className="close-search" 
             >Close</Link>
             <div className="search-books-input-wrapper">
-              <Debounce time="800" handler="onChange">
+              <Debounce time="700" handler="onChange">
                 <input 
                   type="text" 
                   placeholder="Search by title or author"
-                  
                   onChange={(e) => this.updateQuery(e.target.value)}
                 />
               </Debounce>
@@ -53,43 +55,15 @@ class Search extends React.Component {
           </div>
           <div className="search-books-results">
             <ol className="books-grid">
-                {this.state.isLoading
+                {isLoading
                   ? <Loader />
-                  : this.state.search.map(book => (
-                    <li key={book.id}>
-                      <div className="book">
-                        <div className="book-top">
-                          <div className="book-cover" 
-                            style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks && book.imageLinks.thumbnail ? book.imageLinks.thumbnail : cover })`}}></div>
-                          <div className="book-shelf-changer">
-                            <select>
-                              <option value={book.id} disabled>Move to...</option>
-                              <option 
-                                className = 'currentlyReading'
-                                value={book.id} 
-                                onClick={this.props.addToShelf}
-                              >Currently Reading</option>
-                              <option
-                                className = 'wantToRead' 
-                                value={book.id}
-                                onClick={this.props.addToShelf}
-                              >Want to Read</option>
-                              <option 
-                                className = 'read'
-                                value={book.id}
-                                onClick={this.props.addToShelf}
-                              >Read</option>
-                              <option value={book.id} disabled>None</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div className="book-title">{book.title ? book.title : 'No title available'}</div>
-                        {book.authors && book.authors.map( author => (
-                          <div className="book-authors">{author}</div>
-                        ))                             
-                        }  
-                      </div>
-                    </li>
+                  : search.map(book => (
+                    <Book
+                      book = { book }
+                      books = { books }
+                      key = { book.id }
+                      moveToShelf = { moveToShelf }
+                    />
                   ))
                 }                  
               </ol> 
