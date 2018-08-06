@@ -1,6 +1,6 @@
 # MyReads Project (Udacity)
 
-This a project requeried for Udacity Front-End Nanodegree powered by Google. This project consists in a book shelf management Web App.
+This is a project required for Udacity Front-End Nanodegree powered by Google. This project consists in a book shelf management Web App.
 
 ### Requirements:
 

@@ -23,7 +23,7 @@ class Search extends React.Component {
     this.setState({ query: query, isLoading: true })
     
     if (query) {
-      API.search(query.trim()).then( books => {
+      API.search(query).then( books => {
         books.length > 0 ? this.setState({ search : books, isLoading: false }) : this.setState({ search: [], isLoading: false })
       }).catch(err => console.log(err))
 

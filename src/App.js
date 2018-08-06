@@ -1,9 +1,8 @@
 import React from 'react'
-import { Route } from 'react-router-dom'
+import { Route, Link } from 'react-router-dom'
 import * as API from './BooksAPI'
 import Search from './components/search'
 import Shelf from './components/Shelf'
-import { Link } from 'react-router-dom' 
 import './App.css'
 
 class BooksApp extends React.Component {
@@ -29,13 +28,12 @@ class BooksApp extends React.Component {
   } 
     
   moveToShelf = (newBook, shelf) => {
-    
     API.update(newBook.id, shelf).then( res => {
       newBook.shelf = shelf
-      const updateBooks = this.state.books.filter( book => book.id !== newBook.id)
+      const books = this.state.books.filter( book => book.id !== newBook.id)
 
-      updateBooks.push(newBook)
-      this.setState({ books: updateBooks })
+      books.push(newBook)
+      this.setState({ books })
     })
   }
 
